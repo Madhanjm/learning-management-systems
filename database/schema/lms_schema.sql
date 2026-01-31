@@ -74,7 +74,7 @@ CREATE TABLE lms.Assessments(
 
 --Create User Activity Table
 CREATE TABLE lms.User_Activity(
-	activity_id BIGINT IDENTITY(500,1),
+	activity_id INT,
 	user_id INT,
 	lesson_id INT,
 	activity_timestamp DATETIME2,
@@ -109,3 +109,5 @@ CREATE TABLE lms.Assessment_Submissions(
 
     CONSTRAINT UQ_Assessment_User UNIQUE (assessment_id, user_id)
 );
+
+

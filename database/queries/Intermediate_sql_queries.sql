@@ -1,5 +1,12 @@
 --1. List all users who are enrolled in more than three courses.
 
+/*
+-I have used INNER Join to get only those users who have matching
+ enrollments in the Enrollments table.
+-Assumpttions:
+ user can enroll in multiple courses but user can enroll one particular
+ course only once.
+*/
 SELECT 
 	u.user_id,
 	u.user_name,
@@ -11,6 +18,11 @@ SELECT
 	HAVING COUNT(e.course_id)>3;
 	
 --2. Find courses that currently have no enrollments. 
+/*
+-I have used LEFT Join to get all courses and their matching enrollments.
+Assumptions:
+ If a course has no enrollments, the enrollment_id will be NULL.
+*/
 
 SELECT 
 	c.course_id,
@@ -21,6 +33,12 @@ ON c.course_id=e.course_id
 WHERE e.enrollment_id IS NULL;
 
 --3. Display each course along with the total number of enrolled users. 
+
+/*
+-I have used LEFT Join to get all courses and their matching enrollments.
+-Assumptions:
+ If a course has no enrollments, the total_enrolled_users will be 0.
+*/
 
 SELECT 
 	c.course_id,
@@ -33,6 +51,13 @@ GROUP BY c.course_id,course_title
 ORDER BY total_enrolled_users DESC;
 
 --4. Identify users who enrolled in a course but never accessed any lesson. 
+
+/*
+-I have used LEFT Join to get all enrollments and their matching user activities
+and lessons
+-Assumptions:
+ If a user has never accessed any lesson, the lesson_id will be NULL.	
+*/
 
 SELECT DISTINCT
     e.user_id,
@@ -47,6 +72,11 @@ WHERE ua.lesson_id IS NULL;
 
 --5. Fetch lessons that have never been accessed by any user. 
 
+/*
+-I have used LEFT Join to get all lessons and their matching user activities.
+-Assumptions:
+ If a lesson has never been accessed then user_id will be NULL.
+*/
 SELECT
 	l.lesson_id,
 	l.lesson_title,
@@ -57,6 +87,11 @@ LEFT JOIN lms.User_Activity ua
 where ua.lesson_id IS NULL;
 
 --6. Show the last activity timestamp for each user. 
+/*
+-I am Taking the MAX of activity_timestamp to get the last activity time for each user.
+Assumptions:
+Each activity is recorded with a timestamp in the User_Activity table.
+*/
 SELECT	
 	user_id,
 	MAX(activity_timestamp) AS last_timestamp
@@ -66,6 +101,11 @@ FROM lms.User_Activity
 --7. List users who submitted an assessment but scored less than 50 percent of the 
 --maximum score. 
 
+/*
+-I have used LEFT Join to get all assessment submissions and their matching assessments
+-Assumptions:
+ Maximum score for each assessment is defined in the Assessments table.
+*/
 SELECT	
 	ass.assessment_id,
 	ass.user_id,
@@ -79,6 +119,11 @@ where ass.marks_scored<a.max_score *0.50 ;
 
 --8. Find assessments that have not received any submissions. 
 
+/*
+-I have used LEFT Join to get all assessments and their matching assessment submissions
+Assumptions:
+ If an assessment has no submissions then submission_id will be NULL.
+*/
 SELECT 
 	a.assessment_id,
 	a.assessment_title,
@@ -90,6 +135,11 @@ where s.assessment_id IS NULL;
 
 --9. Display the highest score achieved for each assessment. 
 
+/*
+-I am taking the MAX of marks_scored for each assessment_id.
+-Assumptions:
+ Each assessment submission is recorded with a marks_scored value.
+*/
 SELECT 
 	assessment_id,
 	MAX(marks_scored) as highest_score
@@ -98,6 +148,12 @@ GROUP BY assessment_id;
 
 --10. Identify users who are enrolled in a course but have an inactive enrollment status. 
 
+/*
+-I have used INNER JOIN between Enrollments and Users to get users who enrolled
+and used LEFT JOIN with User_Activity to check their activity.
+-Assumptions:
+If user_id is null in User_Activity table, then the user is inactive.
+*/
 SELECT
 	u.user_id,
 	u.user_name,

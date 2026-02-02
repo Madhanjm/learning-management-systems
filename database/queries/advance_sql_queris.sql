@@ -2,6 +2,14 @@
 --○ Total number of enrolled users 
 --○ Total number of lessons 
 --○ Average lesson duration 
+
+/*
+-I have used LEFT Join to get all courses and their matching enrollments and lessons.
+-Assumptions:
+ If a course has no enrollments, the total_enrolled_users will be 0
+ If a course has no lessons, the total_lessons will be 0 and avg_lesson_duration will be NULL
+
+*/
 SELECT
     c.course_id,
     c.course_title,
@@ -19,6 +27,11 @@ GROUP BY
     c.course_duration;
 
 --12. Identify the top three most active users based on total activity count. 
+/*
+-I have used INNER Join to get users who have activity records
+Assumptions:
+ Activity count is based on the number of records in User_Activity table
+*/
 SELECT TOP 3
      u.user_id,
      u.user_name,
@@ -30,6 +43,13 @@ GROUP BY u.user_id,u.user_name
 ORDER BY total_activity_count DESC;
 
 --13. Calculate course completion percentage per user based on lesson activity. 
+
+/*
+-I have used LEFT Join to get all enrollments and their matching lessons and user activities
+-I used Common Table Expressions(CTE) to first calculate total lessons per course and then completed lessons per user per course
+-Assumptions:
+ Completion percentage is calculated as (number of lessons accessed by user / total number of lessons in the course) * 100
+*/
 
 WITH total_lesson AS (
     SELECT  
@@ -60,6 +80,13 @@ JOIN total_lesson t
     ON c.course_id=t.course_id;
 
 --14. Find users whose average assessment score is higher than the course average. 
+
+/*
+-I have used Common Table Expressions(CTE) to calculate average scores for each user and each course
+-I used JOIN to compare user average scores with course average scores
+Assumptions:
+ Average scores are calculated based on all assessments submitted by users for lessons in the course
+*/
 WITH user_avg AS(
     SELECT
         s.user_id,
@@ -96,6 +123,13 @@ WHERE u.user_avg_score > c.course_avg_score;
 
 --15. List courses where lessons are frequently accessed but assessments are never 
 --attempted. 
+
+/*
+-I have used Common Table Expressions(CTE) to first calculate total lesson accesses per course 
+and then identify courses with assessment attempts
+-Assumptions:
+ A lesson is considered frequently accessed if it has more than 15 total accesses
+*/
 WITH lesson_access AS (
     SELECT
         l.course_id,
@@ -125,6 +159,12 @@ WHERE la.total_accesses > 15
 
 --16. Rank users within each course based on their total assessment score.
 
+/*
+-I have used Common Table Expressions(CTE) to first calculate total assessment scores per user per course
+-Then used RANK() function to rank users within each course based on their total scores
+-Assumptions:
+ Ranking is done in descending order of total scores
+*/
 WITH user_total_score AS (
     SELECT
         s.user_id,
@@ -148,6 +188,12 @@ FROM user_total_score
 ORDER BY course_id, rank_within_course;
 
 --17. Identify the first lesson accessed by each user for every course. 
+/*
+-I have used Common Table Expressions(CTE) with ROW_NUMBER() to identify the first lesson
+ accessed by each user for every course based on activity timestamp 
+-Assumptions:
+ First lesson is determined by the earliest activity timestamp for each user-course combination 
+*/
 
 WITH first_lesson_per_user AS(
     SELECT 
@@ -173,6 +219,13 @@ WHERE row_number = 1
 ORDER BY user_id, course_id;
 
 --18. Find users with activity recorded on at least five consecutive days. 
+
+/*
+-I have used Common Table Expressions(CTE) to first get distinct activity dates per user
+-Then used a grouping technique to identify consecutive
+Assumptions:
+ Consecutive days are determined by checking the difference between activity date and a generated group identifier
+*/
 WITH distinct_activity AS (
     SELECT DISTINCT
         user_id,
@@ -196,6 +249,14 @@ HAVING COUNT(*) >= 1;
 
 --19. Retrieve users who enrolled in a course but never submitted any assessment. 
 
+/*
+-I have used JOIN to get enrollments and then used NOT EXISTS to filter users
+ who have not submitted any assessments for the enrolled course
+-Assumptions:
+ A user is considered to have not submitted any assessments if there are no matching records
+ in the Assessment_Submissions table for any assessments linked to lessons in the enrolled course
+*/
+
 SELECT
     u.user_id,
     u.user_name,
@@ -216,6 +277,15 @@ WHERE NOT EXISTS (
 
 
 --20. List courses where every enrolled user has submitted at least one assessment.
+
+/*
+-I have used NOT EXISTS with a nested NOT EXISTS to identify courses
+ where all enrolled users have at least one assessment submission   
+-Assumptions:
+ A user is considered to have submitted an assessment if there is at least one matching record  
+    in the Assessment_Submissions table for any assessments linked to lessons in the course 
+
+*/
 
 SELECT
     c.course_id,

@@ -61,8 +61,6 @@ END CATCH;
 --32. Explain how to handle concurrent assessment submissions safely. 
 
 /*
- The Problem (Why Concurrency Matters)
-
 When multiple users submit assessments at the same time, problems can occur:
 Duplicate submissions
 Overwriting marks
@@ -86,7 +84,6 @@ Insert submission
 Validate marks
 Commit
 Rollback on error
-
 
 */
 
@@ -199,7 +196,7 @@ Use SERIALIZABLE isolation level
     -This level locks the range of rows 
     -Prevents other transactions from inserting new rows in that range
    
-US=se SNAPSHOT isolation level
+Use SNAPSHOT isolation level
     -Provides a consistent view of the data as of the start of the transaction
     -Prevents phantom reads without locking
 /*

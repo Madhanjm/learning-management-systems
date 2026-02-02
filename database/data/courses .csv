@@ -1,0 +1,9 @@
+course_id,course_title,course_duration
+C001,Python for Data Analysis,90
+C002,DevOps with AWS,120
+C003,Linux System Administration,75
+C004,SQL for Data Engineers,60
+C005,Docker & Kubernetes,80
+C006,Cloud Computing Fundamentals,70
+C007,Ansible Automation,50
+C008,Git & GitHub Mastery,40

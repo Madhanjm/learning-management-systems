@@ -56,7 +56,7 @@ ORDER BY total_enrolled_users DESC;
 -I have used LEFT Join to get all enrollments and their matching user activities
 and lessons
 -Assumptions:
- If a user has never accessed any lesson, the lesson_id will be NULL.	
+ If a user has never accessed any lesson then lesson_id and enrollment user_id will be NULL.	
 */
 
 SELECT DISTINCT
@@ -75,16 +75,17 @@ WHERE ua.lesson_id IS NULL;
 /*
 -I have used LEFT Join to get all lessons and their matching user activities.
 -Assumptions:
- If a lesson has never been accessed then user_id will be NULL.
+ If a lesson has never been accessed then activity id  will be NULL in the user activity.
 */
 SELECT
 	l.lesson_id,
 	l.lesson_title,
-	l.course_id
+	l.course_id,
+	ua.activity_id
 FROM lms.Lessons l
 LEFT JOIN lms.User_Activity ua
 	ON ua.lesson_id=l.lesson_id
-where ua.lesson_id IS NULL;
+where ua.activity_id IS NULL;
 
 --6. Show the last activity timestamp for each user. 
 /*
@@ -122,7 +123,7 @@ where ass.marks_scored<a.max_score *0.50 ;
 /*
 -I have used LEFT Join to get all assessments and their matching assessment submissions
 Assumptions:
- If an assessment has no submissions then submission_id will be NULL.
+ If an assessment has no submissions then assessment id will be NULL.
 */
 SELECT 
 	a.assessment_id,

@@ -244,7 +244,7 @@ SELECT
     COUNT(*) AS consecutive_days
 FROM date_groups
 GROUP BY user_id, grp
-HAVING COUNT(*) >= 1;
+HAVING COUNT(*) >= 5;
 
 
 --19. Retrieve users who enrolled in a course but never submitted any assessment. 
